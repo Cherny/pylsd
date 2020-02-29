@@ -2088,11 +2088,17 @@ ntuple_list lsd(image_double image)
 }
 /*----------------------------------------------------------------------------*/
 
+#include <errno.h>
+#include <string.h>
+#include <stdio.h>
+
 void writeNtl(ntuple_list ntl, char* file)
 {
-    FILE *fp;
-    if ((fp = fopen(file, "w")) == NULL)
+    FILE *fp = fopen(file, "w");
+    if (fp == NULL)
     {
+        printf("create file %s\n", file);
+        printf("open fail errno = %d reason = %s \n", errno, strerror(errno));
         printf("cannot open file\n");
         return;
     }
@@ -2105,10 +2111,19 @@ void writeNtl(ntuple_list ntl, char* file)
     fclose(fp);
 }
 
-void lsdGet(double* src, int rows, int cols, char* file) {
+void lsdGet(double* src, int rows, int cols, char* file, int file_name_len) {
     image_double image = new_image_double(cols, rows);
     image->data = src;
     ntuple_list ntl = lsd(image);
-    writeNtl(ntl, file);
+
+    char *file_name = (char*) malloc((file_name_len + 1) * sizeof(char));
+    for(int i = 0, j = 0; i < file_name_len * 4; i += 4, ++j)
+    {
+        file_name[j] = file[i];
+    }
+    file_name[file_name_len] = '\0';
+
+    writeNtl(ntl, file_name);
+    free(file_name);
     free_ntuple_list(ntl);
 }
