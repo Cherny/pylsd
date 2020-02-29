@@ -9,8 +9,10 @@ pylsd is the python bindings for [LSD - Line Segment Detector](http://www.ipol.i
 
 This package uses distutils, which is the default way of installing python modules. To install in your home directory, securely run the following:
 ```
-git clone https://github.com/primetang/pylsd.git
+git clone https://github.com/Cherny/pylsd.git
 cd pylsd
+cmake -Hsource -Btmp
+cmake --build tmp
 [sudo] python setup.py install
 ```
 
@@ -40,7 +42,7 @@ folder, imgName = os.path.split(fullName)
 src = cv2.imread(fullName, cv2.IMREAD_COLOR)
 gray = cv2.cvtColor(src, cv2.COLOR_BGR2GRAY)
 lines = lsd(gray)
-for i in xrange(lines.shape[0]):
+for i in range(lines.shape[0]):
     pt1 = (int(lines[i, 0]), int(lines[i, 1]))
     pt2 = (int(lines[i, 2]), int(lines[i, 3]))
     width = lines[i, 4]
@@ -61,7 +63,7 @@ img = Image.open(fullName)
 gray = np.asarray(img.convert('L'))
 lines = lsd(gray)
 draw = ImageDraw.Draw(img)
-for i in xrange(lines.shape[0]):
+for i in range(lines.shape[0]):
     pt1 = (int(lines[i, 0]), int(lines[i, 1]))
     pt2 = (int(lines[i, 2]), int(lines[i, 3]))
     width = lines[i, 4]
