@@ -7,6 +7,17 @@
 
 from .bindings.lsd_ctypes import *
 
+class Point:
+    def __init__(self, data):
+        self.x, self.y = data
+
+
+class Line:
+    def __init__(self, data):
+        self.pt0 = Point(data[0: 2])
+        self.pt1 = Point(data[2: 4])
+        self.width = data[4]
+
 
 def lsd(src):
     rows, cols = src.shape
@@ -29,4 +40,5 @@ def lsd(src):
     lines = np.array([float(each) for each in cnt[2:]])
     lines = lines.reshape(count, dim)
 
-    return lines
+    line_list = [Line(x) for x in lines]
+    return line_list

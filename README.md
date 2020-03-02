@@ -43,9 +43,9 @@ src = cv2.imread(fullName, cv2.IMREAD_COLOR)
 gray = cv2.cvtColor(src, cv2.COLOR_BGR2GRAY)
 lines = lsd(gray)
 for i in range(lines.shape[0]):
-    pt1 = (int(lines[i, 0]), int(lines[i, 1]))
-    pt2 = (int(lines[i, 2]), int(lines[i, 3]))
-    width = lines[i, 4]
+    pt0 = (int(line.pt0.x), int(line.pt0.y))
+    pt1 = (int(line.pt1.x), int(line.pt1.y))
+    width = line.width
     cv2.line(src, pt1, pt2, (0, 0, 255), int(np.ceil(width / 2)))
 cv2.imwrite(os.path.join(folder, 'cv2_' + imgName.split('.')[0] + '.jpg'), src)
 ```
@@ -64,9 +64,9 @@ gray = np.asarray(img.convert('L'))
 lines = lsd(gray)
 draw = ImageDraw.Draw(img)
 for i in range(lines.shape[0]):
-    pt1 = (int(lines[i, 0]), int(lines[i, 1]))
-    pt2 = (int(lines[i, 2]), int(lines[i, 3]))
-    width = lines[i, 4]
+    pt0 = (int(line.pt0.x), int(line.pt0.y))
+    pt1 = (int(line.pt1.x), int(line.pt1.y))
+    width = line.width
     draw.line((pt1, pt2), fill=(0, 0, 255), width=int(np.ceil(width / 2)))
 img.save(os.path.join(folder, 'PIL_' + imgName.split('.')[0] + '.jpg'))
 ```
