@@ -266,7 +266,9 @@ ntuple_list lsd_scale(image_double image, double scale);
 ntuple_list lsd(image_double image);
 
 
-extern "C" LSD_EXPORT void lsdGet(double* src, int rows, int cols, char* file, int file_name_len);
+extern "C" LSD_EXPORT ntuple_list lsdGet(double* src, int rows, int cols);
+
+extern "C" LSD_EXPORT void lsdClean();
 
 #endif /* !LSD_HEADER */
 /*----------------------------------------------------------------------------*/

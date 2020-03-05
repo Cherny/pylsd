@@ -2088,42 +2088,18 @@ ntuple_list lsd(image_double image)
 }
 /*----------------------------------------------------------------------------*/
 
-#include <errno.h>
-#include <string.h>
-#include <stdio.h>
+static ntuple_list ntl = NULL;
 
-void writeNtl(ntuple_list ntl, char* file)
-{
-    FILE *fp = fopen(file, "w");
-    if (fp == NULL)
-    {
-        printf("create file %s\n", file);
-        printf("open fail errno = %d reason = %s \n", errno, strerror(errno));
-        printf("cannot open file\n");
-        return;
-    }
-    fprintf(fp, "%d ", ntl->size);
-    fprintf(fp, "%d ", ntl->dim);
-    for(int i = 0; i != ntl->size * ntl->dim; ++i)
-    {
-        fprintf(fp, "%lf ", ntl->values[i]);
-    }
-    fclose(fp);
-}
+ntuple_list lsdGet(double* src, int rows, int cols) {
 
-void lsdGet(double* src, int rows, int cols, char* file, int file_name_len) {
     image_double image = new_image_double(cols, rows);
     image->data = src;
-    ntuple_list ntl = lsd(image);
+    ntl = lsd(image);
 
-    char *file_name = (char*) malloc((file_name_len + 1) * sizeof(char));
-    for(int i = 0, j = 0; i < file_name_len * 4; i += 4, ++j)
-    {
-        file_name[j] = file[i];
-    }
-    file_name[file_name_len] = '\0';
+    return ntl;
+}
 
-    writeNtl(ntl, file_name);
-    free(file_name);
+void lsdClean() {
+
     free_ntuple_list(ntl);
 }

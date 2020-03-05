@@ -4,8 +4,9 @@
 # @Author  : Gefu Tang (tanggefu@gmail.com)
 # @Link    : https://github.com/primetang/pylsd
 # @Version : 0.0.1
-
+import numpy.ctypeslib as npct
 from .bindings.lsd_ctypes import *
+
 
 class Point:
     def __init__(self, data):
@@ -19,26 +20,29 @@ class Line:
         self.width = data[4]
 
 
+class TupleListInfo(ctypes.Structure):
+    _fields_ = [
+            ("size", ctypes.c_uint),
+            ("max_size", ctypes.c_uint),
+            ("dim", ctypes.c_uint),
+            ("values", ctypes.POINTER(ctypes.c_double))
+        ]
+
+
 def lsd(src):
     rows, cols = src.shape
     src = src.reshape(1, rows * cols).tolist()[0]
 
-    temp = os.path.abspath(str(np.random.randint(
-        1, 1000000)) + 'ntl.txt').replace('\\', '/')
-
     lens = len(src)
     src = (ctypes.c_double * lens)(*src)
-    lsdlib.lsdGet(src, ctypes.c_int(rows), ctypes.c_int(cols), temp, ctypes.c_int(len(temp)))
 
-    fp = open(temp, 'r')
-    cnt = fp.read().strip().split(' ')
-    fp.close()
-    os.remove(temp)
+    lsdlib.lsdGet.restype = ctypes.POINTER(TupleListInfo)
+    tuple_list_info = lsdlib.lsdGet(src, ctypes.c_int(rows), ctypes.c_int(cols))
+    lsdlib.lsdClean()
 
-    count = int(cnt[0])
-    dim = int(cnt[1])
-    lines = np.array([float(each) for each in cnt[2:]])
-    lines = lines.reshape(count, dim)
+    size, dim = tuple_list_info.contents.size, tuple_list_info.contents.dim
+    values = npct.as_array(tuple_list_info.contents.values, (size * dim,))
+    values = values.reshape(size, dim)
 
-    line_list = [Line(x) for x in lines]
+    line_list = [Line(x) for x in values]
     return line_list
